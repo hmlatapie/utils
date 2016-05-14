@@ -31,10 +31,11 @@ if($command eq 'get')
 	$file = shift;
 	confess $usage
 		if !$repo || !$file;
-	$cmd = <<EOS;
 	$user = 'hmlatapie';
+	$cmd = <<EOS;
 wget https://raw.githubusercontent.com/$user/$repo/master/$file
 EOS
+	print `$cmd`;
 }
 else
 {
