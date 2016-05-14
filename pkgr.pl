@@ -20,6 +20,7 @@ $0 cmd options
 			copies all source code from dir 
 		get repo filename
 			filename does not include .tgz.enc.pl
+		install repo filename
 	options:
 		--secure
 			works with encrypted files
@@ -112,7 +113,22 @@ elsif($command eq 'get')
 	$filename = shift;
 	confess $usage
 		if !$repo || !$filename;		
-	print `github.pl get $repo $filename\.tgz\.enc\.pl`;
+	$fullfilename = "$filename\.tgz\.enc\.pl";
+	`rm $fullfilename`
+		if -e $fullfilename;
+	print `github.pl get $repo $fullfilename`;
+	`chmod +x $fullfilename`;
+}
+elsif($command eq 'install')
+{
+	$repo = shift;
+	$filename = shift;
+	$fullfilename = "$filename\.tgz\.enc\.pl";
+	confess $usage
+		if !$repo || !$filename;		
+	`pkgr.pl get $repo $filename`;
+	`./$fullfilename selfinstall`;
+	`rm $fullfilename`;
 }
 else
 {
