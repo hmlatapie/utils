@@ -16,6 +16,8 @@ $0 cmd options
 			encrypts filename -> filename.enc
 		decrypt filename
 			decrypts filename.enc -> filename
+		copysource dir
+			copies all source code from dir 
 	options:
 		--secure
 			works with encrypted files
@@ -83,6 +85,24 @@ elsif($command eq 'selfinstall')
 	}
 	`tar -xzf $filename`;
 	`rm $filename`;
+}
+elsif($command eq 'copysource')
+{
+	$dir = shift;
+	confess $usage
+		if !$dir;
+
+	$cmd =<<EOS;
+mkdir -p sourcecode && \\
+cd $dir && \\
+find . -iname '*.py' |xargs -d'\n' -n1 -Iasdf python -m py_compile asdf && \\
+find . -iname '*.py' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\
+find . -iname '*.pl' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\ 
+find . -iname '*.json' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\ 
+find . -iname '*.html' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ 
+EOS
+	`$cmd`;
+	`tar -czvf $dir\_sourcecode.tgz sourcecode/`;
 }
 else
 {
