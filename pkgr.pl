@@ -18,6 +18,8 @@ $0 cmd options
 			decrypts filename.enc -> filename
 		copysource dir
 			copies all source code from dir 
+		get repo filename
+			filename does not include .tgz.enc.pl
 	options:
 		--secure
 			works with encrypted files
@@ -103,6 +105,14 @@ find . -iname '*.html' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/
 EOS
 	`$cmd`;
 	`tar -czvf $dir\_sourcecode.tgz sourcecode/`;
+}
+elsif($command eq 'get')
+{
+	$repo = shift;
+	$filename = shift;
+	confess $usage
+		if !$repo || !$filename;		
+	print `github.pl get $repo $filename\.tgz\.enc\.pl`;
 }
 else
 {
