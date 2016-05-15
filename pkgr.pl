@@ -8,7 +8,7 @@ $usage = <<EOS;
 $0 cmd options
 	valid commands:
 		selfinstall
-		create filename
+		create filename|dir
 			creates installer
 			filename -> filename.pl
 			--secure
@@ -21,6 +21,8 @@ $0 cmd options
 		get repo filename
 			filename does not include .tgz.enc.pl
 		install repo filename
+		put repo filename msg
+			without .tgz.enc.pl
 	options:
 		--secure
 			works with encrypted files
@@ -58,6 +60,24 @@ elsif($command eq 'create')
 	confess $usage
 		if !$filename;
 
+	if(-d $filename)
+	{
+		print "processing directory: $filename\n";
+		$dir = $filename;
+		$filename = $dir . '.tgz';
+		`tar -czvf $filename $dir`;
+	}
+	elsif(-e $filename)
+	{
+		print "processing filename: $filename\n";
+	}
+	else
+	{
+		confess $usage;
+	}
+
+	$orig_filename = $filename;
+
 	if($options{secure})
 	{
 		`$0 encrypt $filename`;
@@ -69,6 +89,11 @@ elsif($command eq 'create')
 
 	`rm $filename`
 		if $options{secure};
+
+	if($dir)
+	{
+		`rm $orig_filename`;
+	}
 }
 elsif($command eq 'selfinstall')
 {
@@ -129,6 +154,27 @@ elsif($command eq 'install')
 	`pkgr.pl get $repo $filename`;
 	`./$fullfilename selfinstall`;
 	`rm $fullfilename`;
+}
+elsif($command = 'put')
+{
+	$repo = shift;
+	$filename = shift;
+	$msg = shift;
+	$fullfilename = "$filename\.tgz\.enc\.pl";
+
+	confess $usage
+		if !$repo || !$filename || !$msg;		
+
+	print "file: $fullfilename doesn't exist\n"
+		if ! -e $fullfilename;
+
+	$repobasedir = "$ENV{HOME}/dev/$repo";
+	print "no destination repo directory for: $repobasedir\n"
+		if ! $repobasedir;
+
+	`cp $fullfilename $repobasedir`;
+  	`cd $repobasedir && git commit -a -m \"$msg\"`;
+	`cd $repobasedir && git push`;
 }
 else
 {
