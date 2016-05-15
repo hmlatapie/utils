@@ -1,0 +1,9 @@
+syntax: glob
+*~
+*.png
+*.jpg
+*.jpeg
+
+syntax: regexp
+
+
