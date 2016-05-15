@@ -3,6 +3,7 @@ syntax: glob
 *.png
 *.jpg
 *.jpeg
+*.mp4 
 
 syntax: regexp
 
