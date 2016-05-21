@@ -7,6 +7,11 @@ syntax: glob
 *.h5
 .git/
 .gitignore
+*breadcrumb
+delta/routingTable.pl
+*Primary.log
+*Watchdog.log
+inbox/
 
 syntax: regexp
 
