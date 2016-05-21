@@ -5,6 +5,8 @@ syntax: glob
 *.jpeg
 *.mp4 
 *.h5
+.git/
+.gitignore
 
 syntax: regexp
 
