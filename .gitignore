@@ -19,3 +19,7 @@ nytprof.out
 *.bs
 *~
 /_eumm/
+copy_binary
+copy_source
+pkgit
+
