@@ -14,7 +14,7 @@ $0 cmd options
 			--secure
 		encrypt filename
 			encrypts filename -> filename.enc
-		decrypt filename
+	 	decrypt filename
 			decrypts filename.enc -> filename
 		copysource dir
 			copies all source code from dir 
@@ -120,17 +120,22 @@ elsif($command eq 'copysource')
 	confess $usage
 		if !$dir;
 
+	$dir =~ s/\/$//;
+	$filename = $dir . "_sourcecode.tgz";
+	$sourcecode_dir = "sourcecode_$dir";
+	$sourcecode = "/tmp/$sourcecode_dir";
+	`rm -fr $sourcecode`;
+	`mkdir -p $sourcecode`;
 	$cmd =<<EOS;
-mkdir -p sourcecode && \\
 cd $dir && \\
-find . -iname '*.py' |xargs -d'\n' -n1 -Iasdf python -m py_compile asdf && \\
-find . -iname '*.py' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\
-find . -iname '*.pl' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\ 
-find . -iname '*.json' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ && \\ 
-find . -iname '*.html' |xargs -d'\n' -n1 -Iasdf cp --parents asdf ../sourcecode/ 
+find . -iname '*.py' |xargs -d'\n' -n1 -Iasdf cp --parents asdf $sourcecode/ && \\
+find . -iname '*.pl' |xargs -d'\n' -n1 -Iasdf cp --parents asdf $sourcecode/ && \\ 
+find . -iname '*.json' |xargs -d'\n' -n1 -Iasdf cp --parents asdf $sourcecode/ && \\ 
+find . -iname '*.html' |xargs -d'\n' -n1 -Iasdf cp --parents asdf $sourcecode/ 
 EOS
 	`$cmd`;
-	`tar -czvf $dir\_sourcecode.tgz sourcecode/`;
+	`cd /tmp && tar -czvf $filename $sourcecode_dir/`;
+	`rm -fr $sourcecode`;
 }
 elsif($command eq 'get')
 {
