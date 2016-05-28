@@ -60,6 +60,7 @@ elsif($command eq 'create')
 	confess $usage
 		if !$filename;
 
+	$filename =~ s/\/$//;
 	if(-d $filename)
 	{
 		print "processing directory: $filename\n";

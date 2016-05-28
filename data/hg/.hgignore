@@ -12,6 +12,7 @@ delta/routingTable.pl
 *Primary.log
 *Watchdog.log
 inbox/
+*.mjpg
 
 syntax: regexp
 
