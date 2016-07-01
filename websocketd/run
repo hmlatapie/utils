@@ -1,0 +1,1 @@
+ ./websocketd  --dir=./ --port=8881 --devconsole
